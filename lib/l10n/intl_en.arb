@@ -1,0 +1,126 @@
+{
+  
+  "@app": {
+    "atitle1": "Real Estate",
+    "title1" : "Conneting You To Your Ideal Home",
+    "title2" : "Hi"
+  },
+  "@welcomepage" : {
+    "description1" : "Welcome To RealEstate",
+    "description2" : "Lest's Get You Scout",
+    "description3" : "To Your Ideal Home",
+    "description4" : "Login To Scout With Gmail",
+    "des" : "Do You Have Account",
+    "des1" : " Register"
+  },
+  "@logIn" :{
+    "textfeild" : "name",
+    "textfeild1" : "Enter Your name",
+    "textfeild2" : "password",
+    "textfeild3" : "Enter Your password",
+    "Button" : "Login",
+    "Button2" : "You Have Alrealy Account"
+  },
+  "@register" : {
+    "RegisterName" :" Register" ,
+    "textfeild" : "Name",
+    "textfeild1" : "Please Enter Your Name",
+    "textfeild2" : "Email",
+    "textfeild3" : "Please Enter Your Email",
+    "textfeild4" : "Phone Number",
+    "textfeild5" : "Please Enter Your Phone Number",
+    "textfeild6" : "password",
+    "textfeild7" : "Please Enter Your password",
+    "textfeild8" : "Confirm password",
+    "textfeild9" : "Please Confirm Your password",
+    "Button" : "Register"
+  },
+  "@homepage" : {
+    "Hi" : "Good Morning",
+    "name" : "Andrian Hajdin",
+    "name1" : "Property",
+    "category" : "House",
+    "category1" : "Villa",
+    "category2" : "Vip Home",
+    "category3" : "Apartment",
+    "category4" : "Office",
+    "title" : "Featured",
+    "title1" : "See All",
+    "cardname" : "Luxury sea View Villa",
+    "cardplace" : "EGYPT",
+    "cardname1" : "ModernHouse",
+    "cardplace1" : "Espan",
+    "cardname2" : "White Space",
+    "cardplace2" : "ToGo, Brazil",
+    "cardname3" : "Nature Place",
+    "cardplace3" : "Lokwa, England",
+    "cardstate" : "For Sale"
+  },
+  "@homecard" : {
+    "price" : "/$1,128",
+    "price1" : "/$2888",
+    "price2" : "/$9,996",
+    "price3" : "/$5,122",
+    "save" : "Added To Favorites",
+    "saved" : "Removed From Favorites",
+    "Place" : "Apartment",
+    "rate" : "4.8",
+    "Views" : "1,275 reviews",
+    "beds" : "8 beds",
+    "bath" : "3 Bath",
+    "sq" : "2000 sqft",
+    "nekname" : "agent",
+    "name" : "Andrian Hajdin",
+    "state" : "Owner",
+    "review" : "OverView",
+    "des" : "Sleek, modern 2-bedroom apartment with open businesses that read artists and educators.",
+    
+    "adv" : "Facilities",
+    "adv1" : "Location",
+    "Button" : "Booking Now"
+
+  },
+"@searchpage" : {
+    "Searchappbar" : "Search Property",
+    "Search field" : "Search Property...",
+    "state" : "For Sale"
+
+},
+"@favoratepage" : {
+  "name": " Favorates",
+  "empty" : " No Property Added Yet",
+    "cardname" : "La Grand Masion",
+    "cardplace" : "MrLr Australia"
+  
+},
+"@myBookingPage" :{
+  "name": " My Booking",
+  "cardname" : "La Grand Masion",
+  "cardplace" : "MrLr Australia"
+},
+"@profilePage" : {
+  "nekname": "Profile",
+  "name": "Andrian Hajdin",
+  "class": "My Booking",
+  "class2": "Saved",
+  "class3": "Trems Of Servies",
+  "class4": "Privacy Policy",
+  "class5": "Language",
+  "logOut": "LogOut"
+},
+"@termsofservice" :{
+  
+},
+"@trivacyPolicy" :{
+
+},
+"@navbar" : {
+  "home" : "Home",
+  "Search" : "Search",
+  "Saved" : "saved",
+  "cart" : "Cart",
+  "Profile" : "Profile"
+}
+
+
+}
