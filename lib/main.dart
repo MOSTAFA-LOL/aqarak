@@ -7,15 +7,11 @@ import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:aqarak/Theme/theme.dart';
-import 'package:aqarak/bloc/real_estate_bloc.dart';
-import 'package:aqarak/bloc/real_estate_event.dart';
 import 'package:aqarak/cubit/user_cubit.dart';
 import 'package:aqarak/data/language.dart';
-import 'package:aqarak/newapi/api_service_for%20data.dart';
 import 'package:aqarak/provider/book_provider.dart';
 import 'package:aqarak/provider/favorite_prvider.dart';
 import 'package:aqarak/screans/tap_screan.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
