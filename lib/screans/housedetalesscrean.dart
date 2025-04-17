@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:aqarak/main.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,11 +14,13 @@ class HouseDetalesScrean extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _HouseDetalesScreanState createState() => _HouseDetalesScreanState();
 }
 
 class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
   bool _isFavorite = false;
+  
 
   @override
   void initState() {
@@ -75,6 +78,59 @@ class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
       ),
     );
   }
+  Future<void> _reserveProperty() async {
+  try {
+    // الحصول على معرف المستخدم الحالي
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('يرجى تسجيل الدخول أولاً')),
+      );
+      return;
+    }
+
+    // التحقق مما إذا كان العقار محجوزًا بالفعل
+    final existingReservation = await supabase
+        .from('reservations')
+        .select()
+        .eq('property_id', widget.property['id'])
+        .eq('user_id', userId)
+        .maybeSingle();
+
+    if (existingReservation != null) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('هذا العقار محجوز بالفعل!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    // إضافة الحجز إلى Supabase
+    await supabase.from('reservations').insert({
+      'property_id': widget.property['id'],
+      'user_id': userId,
+      'property_title': widget.property['propertyTitle'],
+      'price': widget.property['price'],
+      'property_images': widget.propertyImages, // يتم تخزين الصور كـ JSON
+      'area': widget.property['area'],
+    });
+
+    // عرض رسالة تأكيد
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('تم حجز العقار بنجاح!'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('حدث خطأ: $e')),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -101,150 +157,186 @@ class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          SizedBox(
-            height: 250,
-            child: widget.propertyImages.isNotEmpty
-                ? PageView.builder(
-                    itemCount: widget.propertyImages.length,
-                    itemBuilder: (context, index) {
-                      final image = widget.propertyImages[index];
-                      return Stack(
-                        children: [
-                          Image.network(
-                            image.isNotEmpty ? image : 'https://via.placeholder.com/150',
-                            height: 250,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'assets/images/placeholder.png',
-                                height: 250,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              );
-                            },
-                          ),
-                          Positioned.fill(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.transparent,
-                                    Colors.black.withOpacity(0.5),
-                                  ],
-                                ),
+      body: Stack(
+  children: [
+    ListView(
+      children: [
+        SizedBox(
+          height: 250,
+          child: widget.propertyImages.isNotEmpty
+              ? PageView.builder(
+                  itemCount: widget.propertyImages.length,
+                  itemBuilder: (context, index) {
+                    final image = widget.propertyImages[index];
+                    return Stack(
+                      children: [
+                        Image.network(
+                          image.isNotEmpty ? image : 'https://via.placeholder.com/150',
+                          height: 250,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              'assets/images/placeholder.png',
+                              height: 250,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        ),
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.5),
+                                ],
                               ),
                             ),
                           ),
-                          Positioned(
-                            bottom: 16,
-                            left: 16,
+                        ),
+                        Positioned(
+                          bottom: 16,
+                          left: 16,
+                          child: Text(
+                            widget.property['propertyTitle'],
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 16,
+                          right: 16,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             child: Text(
-                              widget.property['propertyTitle'],
+                              '${index + 1}/${widget.propertyImages.length}',
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
                               ),
                             ),
                           ),
-                          Positioned(
-                            top: 16,
-                            right: 16,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                '${index + 1}/${widget.propertyImages.length}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  )
-                : Image.asset(
-                    'assets/images/bec1a4fa3ce5cd83809725ef5dc9e9a9.jpg',
-                    height: 250,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+                        ),
+                      ],
+                    );
+                  },
+                )
+              : Image.asset(
+                  'assets/images/bec1a4fa3ce5cd83809725ef5dc9e9a9.jpg',
+                  height: 250,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDetailRow(
+                icon: Icons.attach_money,
+                label: 'السعر',
+                value: '\$${widget.property['price']}',
+                color: Colors.green,
+              ),
+              const SizedBox(height: 16),
+              _buildDetailRow(
+                icon: Icons.location_on,
+                label: 'العنوان',
+                value: widget.property['address'] ?? 'غير متوفر',
+              ),
+              const SizedBox(height: 16),
+              _buildDetailRow(
+                icon: Icons.meeting_room,
+                label: 'عدد الغرف',
+                value: '${widget.property['totalRooms'] ?? 'غير متوفر'}',
+              ),
+              const SizedBox(height: 16),
+              _buildDetailRow(
+                icon: Icons.bathtub,
+                label: 'عدد الحمامات',
+                value: '${widget.property['bathrooms'] ?? 'غير متوفر'}',
+              ),
+              const SizedBox(height: 16),
+              _buildDetailRow(
+                icon: Icons.stairs,
+                label: 'رقم الطابق',
+                value: '${widget.property['floorNumber'] ?? 'غير متوفر'}',
+              ),
+              const SizedBox(height: 16),
+              _buildDetailRow(
+                icon: Icons.square_foot,
+                label: 'المساحة',
+                value: '${widget.property['area'] ?? 'غير متوفر'} متر مربع',
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'الوصف',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1A73E8),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.property['description'] ?? 'لا يوجد وصف متاح',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[700],
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 80), // مساحة إضافية لتجنب التداخل مع الزر
+              Text(
+          widget.property['status'] == 'For Rent' ? ' لايجار ' : 'للبيع ',
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildDetailRow(
-                  icon: Icons.attach_money,
-                  label: 'السعر',
-                  value: '\$${widget.property['price']}',
-                  color: Colors.green,
-                ),
-                const SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.location_on,
-                  label: 'العنوان',
-                  value: widget.property['address'] ?? 'غير متوفر',
-                ),
-                const SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.meeting_room,
-                  label: 'عدد الغرف',
-                  value: '${widget.property['totalRooms'] ?? 'غير متوفر'}',
-                ),
-                const SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.bathtub,
-                  label: 'عدد الحمامات',
-                  value: '${widget.property['bathrooms'] ?? 'غير متوفر'}',
-                ),
-                const SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.stairs,
-                  label: 'رقم الطابق',
-                  value: '${widget.property['floorNumber'] ?? 'غير متوفر'}',
-                ),
-                const SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.square_foot,
-                  label: 'المساحة',
-                  value: '${widget.property['area'] ?? 'غير متوفر'} متر مربع',
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'الوصف',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A73E8),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  widget.property['description'] ?? 'لا يوجد وصف متاح',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[700],
-                    height: 1.5,
-                  ),
-                ),
-              ],
-            ),
+        ),
+            ],
           ),
-        ],
+        ),
+      ],
+    ),
+    Positioned(
+      bottom: 16,
+      left: 16,
+      right: 16,
+      child: ElevatedButton(
+        onPressed: _reserveProperty,
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          backgroundColor: const Color(0xFF1A73E8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child:  Text(
+          widget.property['status'] == 'For Rent' ? 'استاجر الان ' : ' اشتري الان ',
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
+    ),
+  ],
+),
     );
   }
 
