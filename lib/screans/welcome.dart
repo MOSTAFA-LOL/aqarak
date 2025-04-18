@@ -1,5 +1,6 @@
 
-import 'package:aqarak/screans/login.dart';
+import 'package:aqarak/screans/auth.dart';
+
 import 'package:flutter/material.dart';
 
 
@@ -12,7 +13,7 @@ class Welcome extends StatefulWidget {
 
 class _WelcomeState extends State<Welcome> {
 
-
+Color color = Colors.blueAccent;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +56,7 @@ class _WelcomeState extends State<Welcome> {
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => Login()));
+            Navigator.push(context, MaterialPageRoute(builder: (_) => AuthScrean()));
           },
           style: ButtonStyle(
               backgroundColor: WidgetStateProperty.all(Colors.blueAccent)),

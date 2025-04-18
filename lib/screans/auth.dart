@@ -1,10 +1,9 @@
 import 'package:aqarak/cubit/user_cubit.dart';
 import 'package:aqarak/cubit/user_state.dart';
-import 'package:aqarak/provider/imagepick.dart';
+
 import 'package:aqarak/screans/tap_screan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 
 class AuthScrean extends StatefulWidget {
   const AuthScrean({super.key});
@@ -22,21 +21,25 @@ class _AuthScreanState extends State<AuthScrean> {
       child: BlocConsumer<UserCubit, UserState>(
         listener: (context, state) {
           if (state is SignInSuccess || state is SignUpSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("تم بنجاح")),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text("تم بنجاح")));
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const TapScrean()),
             );
           } else if (state is SignInFailure || state is SignUpFailure) {
+            
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state is SignInFailure
-                    ? state.errMessage
-                    : (state as SignUpFailure).errMessage),
+                content: Text(
+                  state is SignInFailure
+                      ? state.errMessage
+                      : (state as SignUpFailure).errMessage,
+                ),
               ),
             );
+            
           }
         },
         builder: (context, state) {
@@ -57,12 +60,13 @@ class _AuthScreanState extends State<AuthScrean> {
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Form(
-                          key: _isLogin
-                              ? context.read<UserCubit>().signInFormKey
-                              : context.read<UserCubit>().signUpFormKey,
+                          key:
+                              _isLogin
+                                  ? context.read<UserCubit>().signInFormKey
+                                  : context.read<UserCubit>().signUpFormKey,
                           child: Column(
                             children: [
-                              if (!_isLogin) const Imagepick(),
+                              // if (!_isLogin) const Imagepick(),
                               TextFormField(
                                 decoration: const InputDecoration(
                                   labelText: 'البريد الالكتروني',
@@ -70,9 +74,10 @@ class _AuthScreanState extends State<AuthScrean> {
                                 keyboardType: TextInputType.emailAddress,
                                 autocorrect: false,
                                 textCapitalization: TextCapitalization.none,
-                                controller: _isLogin
-                                    ? context.read<UserCubit>().signInEmail
-                                    : context.read<UserCubit>().signUpEmail,
+                                controller:
+                                    _isLogin
+                                        ? context.read<UserCubit>().signInEmail
+                                        : context.read<UserCubit>().signUpEmail,
                                 validator: (value) {
                                   if (value == null ||
                                       value.trim().isEmpty ||
@@ -86,11 +91,17 @@ class _AuthScreanState extends State<AuthScrean> {
                                 decoration: const InputDecoration(
                                   labelText: 'الرقم السري',
                                 ),
-                                controller: _isLogin
-                                    ? context.read<UserCubit>().signInPassword
-                                    : context.read<UserCubit>().signUpPassword,
+                                controller:
+                                    _isLogin
+                                        ? context
+                                            .read<UserCubit>()
+                                            .signInPassword
+                                        : context
+                                            .read<UserCubit>()
+                                            .signUpPassword,
                                 validator: (value) {
-                                  if (value == null || value.trim().length < 6) {
+                                  if (value == null ||
+                                      value.trim().length < 6) {
                                     return 'كلمة المرور يجب أن تكون 6 حروف على الأقل';
                                   }
                                   return null;
@@ -104,7 +115,6 @@ class _AuthScreanState extends State<AuthScrean> {
                               else
                                 ElevatedButton(
                                   onPressed: () {
-                                    
                                     if (_isLogin) {
                                       context.read<UserCubit>().signIn();
                                     } else {
@@ -112,9 +122,10 @@ class _AuthScreanState extends State<AuthScrean> {
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer,
+                                    backgroundColor:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.primaryContainer,
                                   ),
                                   child: Text(
                                     _isLogin ? 'تسجيل الدخول' : 'إنشاء حساب',

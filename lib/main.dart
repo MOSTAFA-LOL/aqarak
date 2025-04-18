@@ -1,11 +1,13 @@
 
+import 'package:aqarak/screans/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
+
+
 import 'package:aqarak/Theme/theme.dart';
 import 'package:aqarak/cubit/user_cubit.dart';
 import 'package:aqarak/data/language.dart';
@@ -13,6 +15,7 @@ import 'package:aqarak/provider/book_provider.dart';
 import 'package:aqarak/provider/favorite_prvider.dart';
 import 'package:aqarak/screans/tap_screan.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();

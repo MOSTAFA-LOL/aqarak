@@ -20,7 +20,6 @@ class HouseDetalesScrean extends StatefulWidget {
 
 class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
   bool _isFavorite = false;
-  
 
   @override
   void initState() {
@@ -73,64 +72,49 @@ class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
     // عرض رسالة تأكيد
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(_isFavorite ? 'تمت الإضافة إلى المفضلة' : 'تمت الإزالة من المفضلة'),
+        content: Text(
+          _isFavorite ? 'تمت الإضافة إلى المفضلة' : 'تمت الإزالة من المفضلة',
+        ),
         duration: const Duration(seconds: 2),
       ),
     );
   }
+
   Future<void> _reserveProperty() async {
-  try {
-    // الحصول على معرف المستخدم الحالي
-    final userId = supabase.auth.currentUser?.id;
-    if (userId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('يرجى تسجيل الدخول أولاً')),
-      );
-      return;
-    }
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        'user_id',
+        'user123',
+      ); // Replace with actual user ID
 
-    // التحقق مما إذا كان العقار محجوزًا بالفعل
-    final existingReservation = await supabase
-        .from('reservations')
-        .select()
-        .eq('property_id', widget.property['id'])
-        .eq('user_id', userId)
-        .maybeSingle();
+      final reservationsJson = prefs.getString('reservations') ?? '[]';
+      final List<dynamic> reservations = jsonDecode(reservationsJson);
 
-    if (existingReservation != null) {
-      // ignore: use_build_context_synchronously
+      reservations.add({
+        'propertyTitle': widget.property['propertyTitle'],
+        'status': widget.property['status'],
+        'price': widget.property['price'],
+        'propertyImages': widget.propertyImages,
+        'area': widget.property['area'],
+      });
+
+      await prefs.setString('reservations', jsonEncode(reservations));
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('هذا العقار محجوز بالفعل!'),
+          content: Text('تم حجز العقار بنجاح!'),
           duration: Duration(seconds: 2),
         ),
       );
-      return;
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('حدث خطأ: $e')));
+      print('Reserve error: $e');
+      print('Property: ${widget.property}');
     }
-
-    // إضافة الحجز إلى Supabase
-    await supabase.from('reservations').insert({
-      'property_id': widget.property['id'],
-      'user_id': userId,
-      'property_title': widget.property['propertyTitle'],
-      'price': widget.property['price'],
-      'property_images': widget.propertyImages, // يتم تخزين الصور كـ JSON
-      'area': widget.property['area'],
-    });
-
-    // عرض رسالة تأكيد
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم حجز العقار بنجاح!'),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('حدث خطأ: $e')),
-    );
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -158,185 +142,198 @@ class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
         ],
       ),
       body: Stack(
-  children: [
-    ListView(
-      children: [
-        SizedBox(
-          height: 250,
-          child: widget.propertyImages.isNotEmpty
-              ? PageView.builder(
-                  itemCount: widget.propertyImages.length,
-                  itemBuilder: (context, index) {
-                    final image = widget.propertyImages[index];
-                    return Stack(
-                      children: [
-                        Image.network(
-                          image.isNotEmpty ? image : 'https://via.placeholder.com/150',
+        children: [
+          ListView(
+            children: [
+              SizedBox(
+                height: 250,
+                child:
+                    widget.propertyImages.isNotEmpty
+                        ? PageView.builder(
+                          itemCount: widget.propertyImages.length,
+                          itemBuilder: (context, index) {
+                            final image = widget.propertyImages[index];
+                            return Stack(
+                              children: [
+                                Image.network(
+                                  image.isNotEmpty
+                                      ? image
+                                      : 'https://via.placeholder.com/150',
+                                  height: 250,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      'assets/images/placeholder.png',
+                                      height: 250,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                ),
+                                Positioned.fill(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Colors.transparent,
+                                          Colors.black.withOpacity(0.5),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 16,
+                                  left: 16,
+                                  child: Text(
+                                    widget.property['propertyTitle'],
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 16,
+                                  right: 16,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      '${index + 1}/${widget.propertyImages.length}',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        )
+                        : Image.asset(
+                          'assets/images/bec1a4fa3ce5cd83809725ef5dc9e9a9.jpg',
                           height: 250,
                           width: double.infinity,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              'assets/images/placeholder.png',
-                              height: 250,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            );
-                          },
                         ),
-                        Positioned.fill(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.5),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 16,
-                          left: 16,
-                          child: Text(
-                            widget.property['propertyTitle'],
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 16,
-                          right: 16,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              '${index + 1}/${widget.propertyImages.length}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                )
-              : Image.asset(
-                  'assets/images/bec1a4fa3ce5cd83809725ef5dc9e9a9.jpg',
-                  height: 250,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildDetailRow(
-                icon: Icons.attach_money,
-                label: 'السعر',
-                value: '\$${widget.property['price']}',
-                color: Colors.green,
               ),
-              const SizedBox(height: 16),
-              _buildDetailRow(
-                icon: Icons.location_on,
-                label: 'العنوان',
-                value: widget.property['address'] ?? 'غير متوفر',
-              ),
-              const SizedBox(height: 16),
-              _buildDetailRow(
-                icon: Icons.meeting_room,
-                label: 'عدد الغرف',
-                value: '${widget.property['totalRooms'] ?? 'غير متوفر'}',
-              ),
-              const SizedBox(height: 16),
-              _buildDetailRow(
-                icon: Icons.bathtub,
-                label: 'عدد الحمامات',
-                value: '${widget.property['bathrooms'] ?? 'غير متوفر'}',
-              ),
-              const SizedBox(height: 16),
-              _buildDetailRow(
-                icon: Icons.stairs,
-                label: 'رقم الطابق',
-                value: '${widget.property['floorNumber'] ?? 'غير متوفر'}',
-              ),
-              const SizedBox(height: 16),
-              _buildDetailRow(
-                icon: Icons.square_foot,
-                label: 'المساحة',
-                value: '${widget.property['area'] ?? 'غير متوفر'} متر مربع',
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'الوصف',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1A73E8),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDetailRow(
+                      icon: Icons.attach_money,
+                      label: 'السعر',
+                      value: '\$${widget.property['price']}',
+                      color: Colors.green,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDetailRow(
+                      icon: Icons.location_on,
+                      label: 'العنوان',
+                      value: widget.property['address'] ?? 'غير متوفر',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDetailRow(
+                      icon: Icons.meeting_room,
+                      label: 'عدد الغرف',
+                      value: '${widget.property['totalRooms'] ?? 'غير متوفر'}',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDetailRow(
+                      icon: Icons.bathtub,
+                      label: 'عدد الحمامات',
+                      value: '${widget.property['bathrooms'] ?? 'غير متوفر'}',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDetailRow(
+                      icon: Icons.stairs,
+                      label: 'رقم الطابق',
+                      value: '${widget.property['floorNumber'] ?? 'غير متوفر'}',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDetailRow(
+                      icon: Icons.square_foot,
+                      label: 'المساحة',
+                      value:
+                          '${widget.property['area'] ?? 'غير متوفر'} متر مربع',
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'الوصف',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1A73E8),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.property['description'] ?? 'لا يوجد وصف متاح',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[700],
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 80,
+                    ), // مساحة إضافية لتجنب التداخل مع الزر
+                    Text(
+                      widget.property['status'] == 'For Rent'
+                          ? ' لايجار '
+                          : 'للبيع ',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                widget.property['description'] ?? 'لا يوجد وصف متاح',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[700],
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 80), // مساحة إضافية لتجنب التداخل مع الزر
-              Text(
-          widget.property['status'] == 'For Rent' ? ' لايجار ' : 'للبيع ',
-          style: TextStyle(
-            fontSize: 18,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
             ],
           ),
-        ),
-      ],
-    ),
-    Positioned(
-      bottom: 16,
-      left: 16,
-      right: 16,
-      child: ElevatedButton(
-        onPressed: _reserveProperty,
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          backgroundColor: const Color(0xFF1A73E8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          Positioned(
+            bottom: 16,
+            left: 16,
+            right: 16,
+            child: ElevatedButton(
+              onPressed: _reserveProperty,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: const Color(0xFF1A73E8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                widget.property['status'] == 'For Rent'
+                    ? 'استاجر الان '
+                    : ' اشتري الان ',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ),
-        ),
-        child:  Text(
-          widget.property['status'] == 'For Rent' ? 'استاجر الان ' : ' اشتري الان ',
-          style: TextStyle(
-            fontSize: 18,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        ],
       ),
-    ),
-  ],
-),
     );
   }
 
@@ -349,11 +346,7 @@ class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          color: color ?? const Color(0xFF1A73E8),
-          size: 24,
-        ),
+        Icon(icon, color: color ?? const Color(0xFF1A73E8), size: 24),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -370,10 +363,7 @@ class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
               const SizedBox(height: 4),
               Text(
                 value,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
               ),
             ],
           ),

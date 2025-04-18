@@ -1,7 +1,6 @@
 
 import 'package:aqarak/cubit/EndPoint.dart';
 
-
 class ErrorModel {
   final int status;
   final String errorMessage;

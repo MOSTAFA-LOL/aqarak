@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
 
-import 'package:aqarak/screans/sign_up.dart';
+
 import 'package:aqarak/screans/tap_screan.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +19,7 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
   // Variables to store input values
   String? name, email, phone, password, confirmPassword;
+    Color color = Colors.blueAccent;
 
   @override
   Widget build(BuildContext context) {

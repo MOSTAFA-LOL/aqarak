@@ -116,12 +116,12 @@ class _SearchState extends State<Search> {
         final status = user['status'];
         final price = user['price'];
         final propertyType = user['propertyType'];
-        final city = user['city'];
-        final totalRooms = user['totalRooms'];
-        final bathrooms = user['bathrooms'];
-        final bedrooms = user['bedrooms'];
-        final description = user['description'];
-        final area = user['area'];
+        // final city = user['city'];
+        // final totalRooms = user['totalRooms'];
+        // final bathrooms = user['bathrooms'];
+        // final bedrooms = user['bedrooms'];
+        // final description = user['description'];
+        // final area = user['area'];
         final image = user['propertyImages']['\$values'][1];
 
         return GestureDetector(
@@ -143,6 +143,7 @@ class _SearchState extends State<Search> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
+                  // ignore: deprecated_member_use
                   color: Colors.black.withOpacity(0.1),
                   blurRadius: 6,
                 ),
@@ -166,6 +167,7 @@ class _SearchState extends State<Search> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
+                            // ignore: deprecated_member_use
                             const Color.fromARGB(255, 0, 0, 0).withOpacity(0.7),
                           ],
                           stops: const [0, 1],
@@ -215,6 +217,7 @@ class _SearchState extends State<Search> {
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
+                              // ignore: deprecated_member_use
                               ?.copyWith(color: Colors.white.withOpacity(0.9)),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -225,6 +228,7 @@ class _SearchState extends State<Search> {
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
+                              // ignore: deprecated_member_use
                               ?.copyWith(color: Colors.white.withOpacity(0.9)),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -354,6 +358,7 @@ class PropertySearchDelegate extends SearchDelegate {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
+                        // ignore: deprecated_member_use
                         color: Colors.black.withOpacity(0.1),
                         blurRadius: 6,
                       ),
@@ -377,6 +382,7 @@ class PropertySearchDelegate extends SearchDelegate {
                                 end: Alignment.bottomCenter,
                                 colors: [
                                   Colors.transparent,
+                                  // ignore: deprecated_member_use
                                   const Color.fromARGB(255, 0, 0, 0).withOpacity(0.7),
                                 ],
                                 stops: const [0, 1],
@@ -425,6 +431,7 @@ class PropertySearchDelegate extends SearchDelegate {
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleMedium
+                                    // ignore: deprecated_member_use
                                     ?.copyWith(color: Colors.white.withOpacity(0.9)),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -435,6 +442,7 @@ class PropertySearchDelegate extends SearchDelegate {
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleMedium
+                                    // ignore: deprecated_member_use
                                     ?.copyWith(color: Colors.white.withOpacity(0.9)),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

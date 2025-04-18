@@ -5,7 +5,7 @@ class ApiService {
   final String _baseUrl =
       'http://mohamedtahoon.runasp.net/api'; // Replace with your API URL
 
-  Future<Response> signIn(String email, String password,int id,String name,String image) async {
+  Future<Response> signIn(String email, String password,) async {
     try {
       print(email);
       print(password);
@@ -14,9 +14,7 @@ class ApiService {
         data: {
           'email': email,
           'password': password,
-          'id' : id,
-          'name' : name,
-          'image': image,
+          
 
         },
       );

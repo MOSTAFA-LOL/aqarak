@@ -37,6 +37,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     setState(() {
       favorites = updatedFavorites;
     });
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('تمت الإزالة من المفضلة'),
@@ -97,6 +98,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
+                          // ignore: deprecated_member_use
                           color: Colors.black.withOpacity(0.1),
                           blurRadius: 6,
                         ),
@@ -128,6 +130,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                   end: Alignment.bottomCenter,
                                   colors: [
                                     Colors.transparent,
+                                    // ignore: deprecated_member_use
                                     Colors.black.withOpacity(0.7),
                                   ],
                                   stops: const [0, 1],
@@ -176,6 +179,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleMedium
+                                      // ignore: deprecated_member_use
                                       ?.copyWith(color: Colors.white.withOpacity(0.9)),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -186,6 +190,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleMedium
+                                      // ignore: deprecated_member_use
                                       ?.copyWith(color: Colors.white.withOpacity(0.9)),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,

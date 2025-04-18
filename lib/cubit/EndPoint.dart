@@ -1,6 +1,6 @@
 // ignore: file_names
 class EndPoint {
-  static String baseUrl = "http://mshmsh-001-site1.qtempurl.com/api/";
+  static String baseUrl = "http://mohamedtahoon.runasp.net/api/";
   static String signIn = "auth/login";
   static String signUp = "users";
   static String getUserDataEndPoint(id) {
@@ -11,7 +11,7 @@ class EndPoint {
 class ApiKey {
   static String status = "status";
   static String errorMessage = "ErrorMessage";
-  static String email = "Email";
+  static String email = "email";
   static String password = "password";
   static String token = "token";
   static String message = "message";

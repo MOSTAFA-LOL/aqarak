@@ -3,7 +3,6 @@ import 'package:aqarak/newapi/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class UserCubit extends Cubit<UserState> {
   UserCubit() : super(UserInitial());
 
@@ -15,7 +14,6 @@ class UserCubit extends Cubit<UserState> {
   final signInid = TextEditingController();
   final signInname = TextEditingController();
   final signInimage = TextEditingController();
-
   final signUpFormKey = GlobalKey<FormState>();
   final signUpEmail = TextEditingController();
   final signUpPassword = TextEditingController();
@@ -30,15 +28,12 @@ class UserCubit extends Cubit<UserState> {
       final response = await _apiService.signIn(
         signInEmail.text,
         signInPassword.text,
-        signInid.text as int,
-        signInname.text,
-        signInimage.text,
       );
       emit(SignInSuccess(response.data['token']));
     } catch (e) {
-      emit(SignInFailure(
-          e.toString())); // e.g., "Failed host lookup: 'your-api-base-url.com'"
-    }
+      emit(SignInFailure(e.toString()));
+      print(e);
+    } 
   }
 
   Future<void> signUp() async {
@@ -54,8 +49,9 @@ class UserCubit extends Cubit<UserState> {
       );
       emit(SignUpSuccess(response.data['token']));
     } catch (e) {
-      emit(SignUpFailure(
-          e.toString())); // e.g., "Failed host lookup: 'your-api-base-url.com'"
+      emit(
+        SignUpFailure(e.toString()),
+      );
     }
   }
 }

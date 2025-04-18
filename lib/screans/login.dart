@@ -1,4 +1,5 @@
-import 'package:aqarak/screans/auth.dart';
+
+import 'package:aqarak/screans/tap_screan.dart';
 import 'package:flutter/material.dart';
 
 // import 'package:realestate/screans/homepage.dart';
@@ -76,7 +77,7 @@ class _LoginState extends State<Login> {
           ),
           GestureDetector(
               onTap: (() => Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => AuthScrean()))),
+                  context, MaterialPageRoute(builder: (_) => TapScrean()))),
               child: Container(
                 height: 50,
                 width: 130,

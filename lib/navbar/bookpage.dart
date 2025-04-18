@@ -39,6 +39,7 @@ class _BookpageState extends State<Bookpage> {
     });
 
     // عرض رسالة تأكيد
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('تم حذف الحجز بنجاح!'),
@@ -97,16 +98,20 @@ class _BookpageState extends State<Bookpage> {
                       ),
                       title: Text(
                         property['propertyTitle'] ?? 'عنوان غير متوفر',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(
                         'السعر: \$${property['price'] ?? 'غير متوفر'}',
+                        style: TextStyle(color: Colors.grey,),
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
                             'المساحة: ${property['area'] ?? 'غير متوفر'} م²',
+                            style: TextStyle(color: Colors.grey,),
                           ),
                           const SizedBox(width: 8),
                           IconButton(

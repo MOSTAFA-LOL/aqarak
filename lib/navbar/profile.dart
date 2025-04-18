@@ -5,9 +5,9 @@ import 'package:aqarak/navbar/saved.dart';
 import 'package:aqarak/provider/book_provider.dart';
 import 'package:aqarak/screans/Privacy%20Policy.dart';
 import 'package:aqarak/screans/Terms%20of%20Service.dart';
+import 'package:aqarak/screans/auth.dart';
 import 'package:aqarak/screans/contact_us.dart';
-import 'package:aqarak/screans/login.dart';
-import 'package:aqarak/screans/sign_up.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +21,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  Color color = Colors.blueAccent;
   @override
   Widget build(BuildContext context) {
     final moonIcon = CupertinoIcons.moon_stars;
@@ -302,7 +303,7 @@ class _ProfileState extends State<Profile> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Login(),
+                            builder: (context) => AuthScrean(),
                           ));
                       
                     },

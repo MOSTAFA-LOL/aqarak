@@ -2,7 +2,7 @@ import 'package:aqarak/navbar/profile.dart';
 import 'package:aqarak/navbar/saved.dart';
 import 'package:aqarak/navbar/search.dart';
 import 'package:aqarak/screans/homepage.dart';
-import 'package:aqarak/screans/sign_up.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +18,7 @@ class TapScrean extends StatefulWidget {
 class _TapScreanState extends State<TapScrean> {
   final PageController _pageController = PageController();
   int currentPage = 0;
+  Color color = Colors.blueAccent;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
