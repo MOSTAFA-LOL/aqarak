@@ -7,7 +7,6 @@ class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _FavoritesScreenState createState() => _FavoritesScreenState();
 }
 
@@ -37,11 +36,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     setState(() {
       favorites = updatedFavorites;
     });
-    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تمت الإزالة من المفضلة'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: const Text('تمت الإزالة من المفضلة'),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -54,168 +53,181 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           'العقارات المفضلة',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontSize: 22,
             color: Colors.white,
           ),
         ),
-        backgroundColor: const Color(0xFF1A73E8),
-        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF1A73E8), Color(0xFF4A90E2)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        elevation: 2,
       ),
-      body: favorites.isEmpty
-          ? const Center(child: Text('لا توجد عقارات مفضلة بعد',style: TextStyle(color:Colors.blueAccent)))
-          : GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                mainAxisExtent: 288,
-              ),
-              itemCount: favorites.length,
-              itemBuilder: (context, index) {
-                final property = favorites[index];
-                final name = property['propertyTitle'];
-                final status = property['status'];
-                final price = property['price'];
-                final propertyType = property['propertyType'];
-                final image = (property['propertyImages'] as List<dynamic>)[1];
+      body:
+          favorites.isEmpty
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.favorite_border,
+                      size: 80,
+                      color: Colors.grey[400],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'لا توجد عقارات مفضلة بعد',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'أضف عقارات إلى قائمة المفضلة الخاصة بك!',
+                      style: TextStyle(fontSize: 16, color: Colors.grey[500]),
+                    ),
+                  ],
+                ),
+              )
+              : ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 12),
 
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => HouseDetalesScrean(
-                          property: property,
-                          propertyImages: List<String>.from(property['propertyImages']),
+                itemCount: favorites.length,
+                itemBuilder: (context, index) {
+                  final property = favorites[index];
+
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(12),
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          property['propertyImages'][0] ??
+                              'https://via.placeholder.com/150',
+                          width: 60,
+                          height: 60,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              width: 60,
+                              height: 60,
+                              color: Colors.grey[200],
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value:
+                                      loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress
+                                                  .cumulativeBytesLoaded /
+                                              loadingProgress
+                                                  .expectedTotalBytes!
+                                          : null,
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              'assets/images/placeholder.png',
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
+                            );
+                          },
                         ),
                       ),
-                    );
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          // ignore: deprecated_member_use
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 6,
+                      title: Text(
+                        property['propertyTitle'] ?? 'عنوان غير متوفر',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
                         ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Stack(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Image.network(
-                            image.isNotEmpty ? image : 'https://via.placeholder.com/150',
-                            height: 250,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'assets/images/placeholder.png',
-                                height: 250,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              );
-                            },
-                          ),
-                          Positioned.fill(
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.transparent,
-                                    // ignore: deprecated_member_use
-                                    Colors.black.withOpacity(0.7),
-                                  ],
-                                  stops: const [0, 1],
-                                ),
-                              ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'السعر: \$${property['price'] ?? 'غير متوفر'}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[700],
                             ),
                           ),
-                          Positioned(
-                            top: 16,
-                            right: 16,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                status == 'For Rent' ? 'للإيجار' : 'للبيع',
-                                style: const TextStyle(
-                                  color: Color.fromARGB(157, 18, 126, 4),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 16,
-                            right: 16,
-                            bottom: 16,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  name,
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  propertyType,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      // ignore: deprecated_member_use
-                                      ?.copyWith(color: Colors.white.withOpacity(0.9)),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  '\$$price',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      // ignore: deprecated_member_use
-                                      ?.copyWith(color: Colors.white.withOpacity(0.9)),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            top: 16,
-                            left: 16,
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.favorite,
-                                color: Colors.red,
-                              ),
-                              onPressed: () => _removeFavorite(property),
+                          const SizedBox(height: 2),
+                          Text(
+                            'المساحة: ${property['area'] ?? 'غير متوفر'} م²',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[700],
                             ),
                           ),
                         ],
                       ),
+                      trailing: IconButton(
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: Colors.redAccent,
+                        ),
+                        onPressed:
+                            () => showDialog(
+                              context: context,
+                              builder:
+                                  (context) => AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    title: const Text('تأكيد الحذف'),
+                                    content: const Text(
+                                      'هل أنت متأكد من حذف هذا الحجز؟',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text(
+                                          'إلغاء',
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          _removeFavorite(property);
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text(
+                                          'حذف',
+                                          style: TextStyle(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                            ),
+                        tooltip: 'حذف الحجز',
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
     );
   }
 }

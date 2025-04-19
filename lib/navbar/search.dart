@@ -122,7 +122,7 @@ class _SearchState extends State<Search> {
         // final bedrooms = user['bedrooms'];
         // final description = user['description'];
         // final area = user['area'];
-        final image = user['propertyImages']['\$values'][1];
+        final image = user['propertyImages']['\$values'][0];
 
         return GestureDetector(
           onTap: () {
