@@ -1,7 +1,6 @@
 import 'package:aqarak/navbar/bookpage.dart';
 import 'package:aqarak/navbar/profile.dart';
 import 'package:aqarak/navbar/saved.dart';
-import 'package:aqarak/navbar/search.dart';
 import 'package:aqarak/screans/homepage.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -56,7 +55,7 @@ class _TapScreanState extends State<TapScrean> {
             icon: Icon(Icons.bookmark_outline),
             activeIcon: Icon(Icons.bookmark),
             label: 'المحفظات',
-            
+
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart_outlined),
