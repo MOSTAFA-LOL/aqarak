@@ -54,12 +54,12 @@ class _ProfileState extends State<Profile> {
               Stack(
                 alignment: Alignment.bottomRight,
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(4),
+                  Container(      
+                decoration:BoxDecoration(borderRadius: BorderRadius.circular(11)),
                     child: Image.network(
                       'https://res.cloudinary.com/dizj9rluo/image/upload/v1744113485/defaultPerson_e7w75t.jpg',
-                      width: 50,
-                        height: 50,
+                    height: 60,
+                    width: 60,
                     ),
                   ),
                   Container(

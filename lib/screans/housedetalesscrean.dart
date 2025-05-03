@@ -58,10 +58,8 @@ class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
   
 
     await prefs.setString('favorites', jsonEncode(favorites));
-    // setState(() {
-    //   _isFavorite = !_isFavorite;
-    // });
-
+    setState(() {
+      _isFavorite = !_isFavorite;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -71,6 +69,8 @@ class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
         duration: const Duration(seconds: 2),
       ),
     );
+    });
+
   }
 
   Future<void> _reserveProperty() async {

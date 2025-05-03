@@ -27,18 +27,32 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     });
   }
 
-  Future<void> _removeFavorite(Map<String, dynamic> property) async {
+// Future<void> _removeFavorite(Map<String, dynamic> property) async {
+//   final prefs = await SharedPreferences.getInstance();
+//   final favoritesJson = prefs.getString('favorites') ?? '[]';
+//   List<dynamic> updatedFavorites = jsonDecode(favoritesJson);
+//   updatedFavorites.removeWhere((fav) => fav['id'] == property['id']);
+//   await prefs.setString('favorites', jsonEncode(updatedFavorites));
+//   setState(() {
+//     favorites = updatedFavorites;
+//   });
+//   ScaffoldMessenger.of(context).showSnackBar(
+//     SnackBar(
+//       content: const Text('تمت الإزالة من المفضلة'),
+//       backgroundColor: Colors.green,
+//       duration: const Duration(seconds: 2),
+//     ),
+//   );
+// }
+Future<void> _removeFavorite(int index) async {
     final prefs = await SharedPreferences.getInstance();
-    final favoritesJson = prefs.getString('favorites') ?? '[]';
-    List<dynamic> updatedFavorites = jsonDecode(favoritesJson);
-    updatedFavorites.removeWhere((fav) => fav['id'] == property['id']);
-    await prefs.setString('favorites', jsonEncode(updatedFavorites));
-    setState(() {
-      favorites = updatedFavorites;
-    });
+    favorites.removeAt(index);
+    await prefs.setString('reservations', jsonEncode(favorites));
+    setState(() {});
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('تمت الإزالة من المفضلة'),
+        content: const Text('تم حذف الحجز بنجاح!'),
         backgroundColor: Colors.green,
         duration: const Duration(seconds: 2),
       ),
@@ -209,7 +223,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          _removeFavorite(property);
+                                          _removeFavorite(index);
                                           Navigator.pop(context);
                                         },
                                         child: const Text(

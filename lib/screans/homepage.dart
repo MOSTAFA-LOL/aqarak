@@ -372,7 +372,7 @@ class _HomepageState extends State<Homepage> {
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
         setState(() {
-          users = json['\$values'].reversed.take(7).toList();
+          users = json['\$values'].reversed.take(16).toList();
           isLoading = false;
         });
       } else {
