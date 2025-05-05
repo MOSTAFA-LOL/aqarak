@@ -363,7 +363,15 @@ class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
                             height: 1.5,
                           ),
                         ),
-                        const SizedBox(height: 80),
+                        const SizedBox(height: 20),
+                        _buildFacilitiesSection(),
+                        const SizedBox(height: 20),
+                        _buildGallerySection(),
+                        const SizedBox(height: 10),
+                        // _buildOverviewSection(),
+                        _buildMapSection(context)
+                        
+
                       ],
                     ),
                   ),
@@ -371,6 +379,7 @@ class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
               ),
             ],
           ),
+          
           Positioned(
             bottom: 16,
             left: 16,
@@ -399,6 +408,125 @@ class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+    Widget _buildMapSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: AspectRatio(
+            aspectRatio: 16 / 9,
+            child: Image.asset(
+              'assets/images/map.png',
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) =>
+                  const Center(child: Icon(Icons.error_outline)),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+    Widget _buildOverviewSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'الاراء',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey.shade800,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          'Sleek, modern 2-bedroom apartment with open businesses '
+          'that read artists and educators.',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey.shade600,
+            height: 1.4,
+          ),
+        ),
+      ],
+    );
+  }
+    Widget _buildFacilitiesSection() {
+    final facilities = [
+      'جراج سيارات ',
+      'حمامات سباحه', 
+      'صالات رياضيه', 
+      'مطاعم',
+      'شبكه اتصالات ', 
+      'مركز للحيوانات ', 
+      'مراكز رياضيه ', 
+      'مغسله '
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'المميزات',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey.shade800,
+          ),
+        ),
+        const SizedBox(height: 16),
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          childAspectRatio: 3,
+          children: facilities.map((facility) => Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.green.shade600, size: 20),
+              const SizedBox(width: 8),
+              Text(facility, style: TextStyle(color: Colors.grey.shade600)),]
+            ),
+          ).toList(),
+        ),
+        
+      ],
+    );
+  }
+  Widget _buildGallerySection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'الموقع',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey.shade800,
+          ),
+        ),
+        const SizedBox(height: 12),
+        _buildLocationItem('مصر الجديده 100 شارع شبرا '),
+        _buildLocationItem('77 منطقه الكوربه '),
+        _buildLocationItem('10 شارع وسط البلد'),
+        _buildLocationItem('مديني'),
+        _buildLocationItem('مدينه الرحاب '),
+      ],
+    );
+  }
+    Widget _buildLocationItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Icon(Icons.location_on, color: Colors.red.shade600, size: 18),
+          const SizedBox(width: 8),
+          Text(text, style: TextStyle(color: Colors.grey.shade600)),
         ],
       ),
     );
