@@ -369,7 +369,8 @@ class _HouseDetalesScreanState extends State<HouseDetalesScrean> {
                         _buildGallerySection(),
                         const SizedBox(height: 10),
                         // _buildOverviewSection(),
-                        _buildMapSection(context)
+                        _buildMapSection(context),
+                        const SizedBox(height: 30),
                         
 
                       ],
