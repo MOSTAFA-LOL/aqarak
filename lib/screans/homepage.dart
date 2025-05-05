@@ -3,6 +3,7 @@ import 'package:aqarak/navbar/search.dart';
 import 'package:aqarak/screans/housedetalesscrean.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -38,12 +39,12 @@ class _HomepageState extends State<Homepage> {
   void initState() {
     super.initState();
     fetchUsers();
+    
   }
 
   @override
   Widget build(BuildContext context) {
     final List<PropertyType> propertyTypes = [
-      
       const PropertyType(
         key: 'Villa',
         value: 'Found 7',
@@ -52,7 +53,7 @@ class _HomepageState extends State<Homepage> {
         buttonLabel: 'فيلا',
         imageWidth: 33,
       ),
-      
+
       const PropertyType(
         key: 'Apartment',
         value: 'Found 6',
@@ -83,38 +84,54 @@ class _HomepageState extends State<Homepage> {
       child: Scaffold(
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            padding: EdgeInsets.symmetric(
+              horizontal:
+                  MediaQuery.of(context).size.width *
+                  0.04, // 4% of screen width
+              vertical:
+                  MediaQuery.of(context).size.height *
+                  0.02, // 2% of screen height
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  children: <Widget>[
+                  children: [
                     Container(
                       margin: const EdgeInsets.all(8),
-                      child: Image.network(
-                        'https://res.cloudinary.com/dizj9rluo/image/upload/v1744113485/defaultPerson_e7w75t.jpg',
-                        width: 50,
-                        height: 50,
+                      child: CircleAvatar(
+                        radius: 25, // Adjusted for better proportionality
+                        backgroundImage: NetworkImage(
+                          'https://res.cloudinary.com/dizj9rluo/image/upload/v1744113485/defaultPerson_e7w75t.jpg',
+                        ),
+                        backgroundColor: Colors.grey.shade200, // Fallback color
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'صباح الخير',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey.shade600,
-                            fontStyle: FontStyle.italic,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'صباح الخير',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey.shade600,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'اسم المالك',
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          Text(
+                            'اسم المالك',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16, // Slightly smaller for balance
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const Spacer(),
                   ],
@@ -122,18 +139,23 @@ class _HomepageState extends State<Homepage> {
                 const SizedBox(height: 20),
                 Text(
                   'اقسام العقارات',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: propertyTypes
-                        .map((type) => _buildPropertyTypeButton(
-                              context: context,
-                              type: type,
-                            ))
-                        .toList(),
+                    children:
+                        propertyTypes
+                            .map(
+                              (type) => _buildPropertyTypeButton(
+                                context: context,
+                                type: type,
+                              ),
+                            )
+                            .toList(),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -142,7 +164,9 @@ class _HomepageState extends State<Homepage> {
                   children: [
                     Text(
                       'توصيات',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     GestureDetector(
                       onTap: fetchUsers,
@@ -160,13 +184,48 @@ class _HomepageState extends State<Homepage> {
                 const SizedBox(height: 16),
                 SizedBox(
                   height: 340,
-                  child: isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : errorMessage != null
+                  child:
+                      isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : errorMessage != null
                           ? Center(child: Text(errorMessage!))
                           : users.isEmpty
-                              ? const Center(child: Text('لا توجد بيانات متاحة'))
-                              : card(),
+                          ? const Center(child: Text('لا توجد بيانات متاحة'))
+                          : card(),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'ترشيحات اخري',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: fetchUsers,
+                      child: const Text(
+                        'عرض المزيد',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.blueAccent,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 340,
+                  child:
+                      isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : errorMessage != null
+                          ? Center(child: Text(errorMessage!))
+                          : users.isEmpty
+                          ? const Center(child: Text('لا توجد بيانات متاحة'))
+                          : card2(),
                 ),
               ],
             ),
@@ -177,137 +236,348 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget card() {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 1,
-        mainAxisSpacing: 22,
-        crossAxisSpacing: 11,
-        mainAxisExtent: 422,
-      ),
-      itemCount: users.length,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (context, index) {
-        final user = users[index];
-        final name = user['propertyTitle'];
-        final status = user['status'];
-        final price = user['price'];
-        final propertyType = user['propertyType'];
-        final image = user['propertyImages']['\$values'][1];
+    return SizedBox(
+      height:
+          MediaQuery.of(context).size.height *
+          0.45, // Responsive height (45% of screen)
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: users.length,
+        itemBuilder: (context, index) {
+          final user = users[index];
+          final name = user['propertyTitle'] ?? 'Unknown Property';
+          final status = user['status'] ?? 'Unknown';
+          final price = user['price']?.toString() ?? 'N/A';
+          final propertyType = user['propertyType'] ?? 'Unknown Type';
+          final image =
+              user['propertyImages']?['\$values']?[1] ??
+              'https://via.placeholder.com/150';
 
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => HouseDetalesScrean(
-                  property: user,
-                  propertyImages: List<String>.from(user['propertyImages']['\$values'] ?? []),
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (_) => HouseDetalesScrean(
+                        property: user,
+                        propertyImages: List<String>.from(
+                          user['propertyImages']?['\$values'] ?? [],
+                        ),
+                      ),
                 ),
-              ),
-            );
-          },
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            width: 160,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 6,
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Stack(
-                children: [
-                  Image.network(
-                    image.isNotEmpty ? image : 'https://via.placeholder.com/150',
-                    height: 250,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                  Positioned.fill(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            const Color.fromARGB(255, 0, 0, 0).withOpacity(0.7),
-                          ],
-                          stops: const [0, 1],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 16,
-                    right: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        status == 'For Rent' ? 'للإيجار' : 'للبيع',
-                        style: const TextStyle(
-                          color: Color.fromARGB(157, 18, 126, 4),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 16,
-                    right: 16,
-                    bottom: 16,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          name,
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          strutStyle: const StrutStyle(),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          propertyType,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(color: Colors.white.withOpacity(0.9)),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '\$$price',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(color: Colors.white.withOpacity(0.9)),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
+              );
+            },
+            child: Container(
+              width:
+                  MediaQuery.of(context).size.width *
+                  0.5, // 50% of screen width for responsiveness
+              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Stack(
+                  children: [
+                    // Image with caching
+                    CachedNetworkImage(
+                      imageUrl: image,
+                      height: 220, // Slightly reduced for better proportion
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder:
+                          (context, url) => const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                      errorWidget:
+                          (context, url, error) => Image.network(
+                            'https://via.placeholder.com/150',
+                            fit: BoxFit.cover,
+                          ),
+                    ),
+                    // Gradient overlay
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.7),
+                            ],
+                            stops: const [0.5, 1.0],
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Status badge
+                    Positioned(
+                      top: 12,
+                      right: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          status == 'For Rent' ? 'للإيجار' : 'للبيع',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(
+                            color: Colors.green.shade700,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Property details
+                    Positioned(
+                      left: 12,
+                      right: 12,
+                      bottom: 12,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleMedium?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            propertyType,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 14,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '\$$price',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget card2() {
+    return SizedBox(
+      height:
+          MediaQuery.of(context).size.height *
+          0.45, // Responsive height (45% of screen)
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: users.length,
+        itemBuilder: (context, index) {
+          final user = users[index];
+          final name = user['propertyTitle'] ?? 'Unknown Property';
+          final status = user['status'] ?? 'Unknown';
+          final price = user['price']?.toString() ?? 'N/A';
+          final propertyType = user['propertyType'] ?? 'Unknown Type';
+          final image =
+              user['propertyImages']?['\$values']?[0] ??
+              'https://via.placeholder.com/150';
+
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (_) => HouseDetalesScrean(
+                        property: user,
+                        propertyImages: List<String>.from(
+                          user['propertyImages']?['\$values'] ?? [],
+                        ),
+                      ),
+                ),
+              );
+            },
+            child: Container(
+              width:
+                  MediaQuery.of(context).size.width *
+                  0.5, // 50% of screen width for responsiveness
+              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Stack(
+                  children: [
+                    // Image with caching
+                    CachedNetworkImage(
+                      imageUrl: image,
+                      height: 220, // Slightly reduced for better proportion
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder:
+                          (context, url) => const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                      errorWidget:
+                          (context, url, error) => Image.network(
+                            'https://via.placeholder.com/150',
+                            fit: BoxFit.cover,
+                          ),
+                    ),
+                    // Gradient overlay
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.7),
+                            ],
+                            stops: const [0.5, 1.0],
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Status badge
+                    Positioned(
+                      top: 12,
+                      right: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          status == 'For Rent' ? 'للإيجار' : 'للبيع',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(
+                            color: Colors.green.shade700,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Property details
+                    Positioned(
+                      left: 12,
+                      right: 12,
+                      bottom: 12,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleMedium?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            propertyType,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 14,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '\$$price',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -350,11 +620,12 @@ class _HomepageState extends State<Homepage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => Search(
-          propertyKey: property.key,
-          propertyValue: property.value,
-          propertyImage: property.image,
-        ),
+        builder:
+            (_) => Search(
+              propertyKey: property.key,
+              propertyValue: property.value,
+              propertyImage: property.image,
+            ),
       ),
     );
   }
@@ -373,6 +644,7 @@ class _HomepageState extends State<Homepage> {
         final json = jsonDecode(response.body);
         setState(() {
           users = json['\$values'].reversed.take(16).toList();
+
           isLoading = false;
         });
       } else {
@@ -385,4 +657,6 @@ class _HomepageState extends State<Homepage> {
       });
     }
   }
+
+  
 }
