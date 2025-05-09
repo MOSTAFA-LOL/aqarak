@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:aqarak/screans/housedetalesscrean.dart';
+
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _FavoritesScreenState createState() => _FavoritesScreenState();
 }
 

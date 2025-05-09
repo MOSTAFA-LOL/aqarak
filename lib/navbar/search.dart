@@ -252,7 +252,7 @@ class _SearchState extends State<Search> {
     });
 
     try {
-      const url = 'http://mohamedtahoon.runasp.net/api/Properties';
+      const url = 'https://mohamedtahoon.runasp.net/api/Properties';
       final uri = Uri.parse(url);
       final response = await http.get(uri);
       if (response.statusCode == 200) {

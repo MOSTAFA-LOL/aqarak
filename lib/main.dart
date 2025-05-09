@@ -1,5 +1,3 @@
-
-import 'package:aqarak/screans/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -10,7 +8,7 @@ import 'package:provider/provider.dart';
 
 import 'package:aqarak/Theme/theme.dart';
 import 'package:aqarak/cubit/user_cubit.dart';
-import 'package:aqarak/data/language.dart';
+
 import 'package:aqarak/provider/book_provider.dart';
 import 'package:aqarak/provider/favorite_prvider.dart';
 import 'package:aqarak/screans/tap_screan.dart';
@@ -73,18 +71,12 @@ class _MyAppState extends State<MyApp> {
                 GlobalWidgetsLocalizations.delegate,
               ],
               supportedLocales: const [
-                // Locale('en'), // English
+                
                 Locale('ar'), // Arabic
               ],
-              locale: LocaleService().getLocale(),
+              locale: const Locale('ar'),
               localeResolutionCallback: (locale, supportedLocales) {
-                for (var supportedLocale in supportedLocales) {
-                  if (supportedLocale.languageCode == locale?.languageCode) {
-                    return supportedLocale;
-                  }
-                }
-                
-                return supportedLocales.first;
+                return const Locale('ar');
               },
               home: TapScrean()));
 }

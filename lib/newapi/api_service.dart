@@ -3,20 +3,15 @@ import 'package:dio/dio.dart';
 class ApiService {
   final Dio _dio = Dio();
   final String _baseUrl =
-      'http://mohamedtahoon.runasp.net/api'; // Replace with your API URL
+      'https://mohamedtahoon.runasp.net/api'; // Replace with your API URL
 
-  Future<Response> signIn(String email, String password,) async {
+  Future<Response> signIn(String email, String password) async {
     try {
       print(email);
       print(password);
       final response = await _dio.post(
         '$_baseUrl/auth/login',
-        data: {
-          'email': email,
-          'password': password,
-          
-
-        },
+        data: {'email': email, 'password': password},
       );
       return response;
     } on DioException catch (e) {
@@ -28,16 +23,29 @@ class ApiService {
     }
   }
 
-  Future<Response> signUp(String email, String password) async {
+  Future<Response> signUp(
+    String email,
+    String password,
+    String name,
+    String phone,
+  ) async {
     try {
+      print(email);
+      print(password);
+      print(name);
+      print(phone);
       final response = await _dio.post(
         '$_baseUrl/users',
         data: {
           'email': email,
           'password': password,
-
+          'fullName': name,
+          'phoneNumber': phone,
+          'image':
+              'https://res.cloudinary.com/dizj9rluo/image/upload/v1744113485/defaultPerson_e7w75t.jpg', // يمكنك لاحقاً ربطه بحقل صورة حقيقي
         },
       );
+
       return response;
     } on DioException catch (e) {
       // Handle specific Dio errors
@@ -55,7 +63,8 @@ class ApiService {
       return Exception("Failed host lookup: '$host'");
     }
     return Exception(
-        '$message (Status code: ${response?.statusCode ?? 'unknown'})');
+      '$message (Status code: ${response?.statusCode ?? 'unknown'})',
+    );
   }
 
   // Helper function to interpret Dio errors

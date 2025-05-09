@@ -12,3 +12,7 @@ class Splash extends StatelessWidget {
     );
   }
 }
+// mrshad794@gmail.com
+// mo rashad
+// Mo01010101010
+//A@dmin1234

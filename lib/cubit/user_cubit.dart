@@ -17,6 +17,15 @@ class UserCubit extends Cubit<UserState> {
   final signUpFormKey = GlobalKey<FormState>();
   final signUpEmail = TextEditingController();
   final signUpPassword = TextEditingController();
+  final signUpName = TextEditingController();
+  final signUpPhone = TextEditingController();
+
+  String? currentUserEmail;
+  String? currentUserName;
+  String? currentUserPhone;
+  String? currentUserToken;
+  String? currentUserId;
+  String? currentUserImage;  
 
   Future<void> signIn() async {
     if (!signInFormKey.currentState!.validate()) {
@@ -29,10 +38,19 @@ class UserCubit extends Cubit<UserState> {
         signInEmail.text,
         signInPassword.text,
       );
+      currentUserEmail = signInEmail.text;
+      currentUserName = response.data['user'] != null ? response.data['user']['name'] ?? '' : '';
+      currentUserPhone = response.data['user'] != null ? response.data['user']['phone'] ?? '' : '';
+      currentUserToken = response.data['token'];
+      currentUserId = response.data['user']['id'];
+      currentUserImage = response.data['user']['image'];
+      // Clear the sign up form
+
       emit(SignInSuccess(response.data['token']));
     } catch (e) {
       emit(SignInFailure(e.toString()));
       print(e);
+      
     } 
   }
 
@@ -46,8 +64,27 @@ class UserCubit extends Cubit<UserState> {
       final response = await _apiService.signUp(
         signUpEmail.text,
         signUpPassword.text,
+        signUpName.text,
+        signUpPhone.text,
       );
+      currentUserEmail = signUpEmail.text;
+      currentUserName = response.data['user'] != null ? response.data['user']['name'] ?? '' : '';
+      currentUserPhone = response.data['user'] != null ? response.data['user']['phone'] ?? '' : '';
+      currentUserToken = response.data['token'];
+      currentUserId = response.data['user']['id'];
+      currentUserImage = response.data['user']['image'];
+      // Clear the sign up form
+      signUpEmail.clear();
+      signUpPassword.clear();
+      signUpName.clear();
+      signUpPhone.clear();
+      // Switch to login mode
       emit(SignUpSuccess(response.data['token']));
+      print(currentUserId);
+      // Automatically fill the login form with the registered email
+      signInEmail.text = signUpEmail.text;
+      // Sign in automatically to fetch user data
+      await signIn();
     } catch (e) {
       emit(
         SignUpFailure(e.toString()),

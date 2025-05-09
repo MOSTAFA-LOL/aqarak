@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class ApiService1 {
   final String baseUrl =
-      "http://mohamedtahoon.runasp.net/api"; // Replace with your API URL
+      "https://mohamedtahoon.runasp.net/api"; // Replace with your API URL
 
 Future<List<dynamic>> fetchProperties() async {
   final response = await http.get(Uri.parse('$baseUrl/Properties'));

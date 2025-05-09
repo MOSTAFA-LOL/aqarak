@@ -4,6 +4,8 @@ import 'package:aqarak/screans/housedetalesscrean.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:aqarak/cubit/user_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -102,7 +104,9 @@ class _HomepageState extends State<Homepage> {
                       child: CircleAvatar(
                         radius: 25, // Adjusted for better proportionality
                         backgroundImage: NetworkImage(
-                          'https://res.cloudinary.com/dizj9rluo/image/upload/v1744113485/defaultPerson_e7w75t.jpg',
+                          (context.read<UserCubit>().currentUserImage?.isNotEmpty ?? false)
+                              ? context.read<UserCubit>().currentUserImage!
+                              : 'https://res.cloudinary.com/dizj9rluo/image/upload/v1744113485/defaultPerson_e7w75t.jpg',
                         ),
                         backgroundColor: Colors.grey.shade200, // Fallback color
                       ),
@@ -122,7 +126,7 @@ class _HomepageState extends State<Homepage> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'اسم المالك',
+                            context.read<UserCubit>().currentUserName ?? 'اسم المالك',
                             style: Theme.of(
                               context,
                             ).textTheme.titleMedium?.copyWith(
@@ -249,9 +253,10 @@ class _HomepageState extends State<Homepage> {
           final status = user['status'] ?? 'Unknown';
           final price = user['price']?.toString() ?? 'N/A';
           final propertyType = user['propertyType'] ?? 'Unknown Type';
-          final image =
-              user['propertyImages']?['\$values']?[1] ??
-              'https://via.placeholder.com/150';
+          final propertyImages = user['propertyImages']?['\$values'] as List?;
+          final image = propertyImages != null && propertyImages.isNotEmpty
+              ? propertyImages[0].toString()
+              : 'https://via.placeholder.com/150';
 
           return GestureDetector(
             onTap: () {
@@ -422,9 +427,10 @@ class _HomepageState extends State<Homepage> {
           final status = user['status'] ?? 'Unknown';
           final price = user['price']?.toString() ?? 'N/A';
           final propertyType = user['propertyType'] ?? 'Unknown Type';
-          final image =
-              user['propertyImages']?['\$values']?[0] ??
-              'https://via.placeholder.com/150';
+          final propertyImages = user['propertyImages']?['\$values'] as List?;
+          final image = propertyImages != null && propertyImages.isNotEmpty
+              ? propertyImages[1].toString()
+              : 'https://via.placeholder.com/150';
 
           return GestureDetector(
             onTap: () {
@@ -637,7 +643,7 @@ class _HomepageState extends State<Homepage> {
     });
 
     try {
-      const url = 'http://mohamedtahoon.runasp.net/api/Properties';
+      const url = 'https://mohamedtahoon.runasp.net/api/Properties';
       final uri = Uri.parse(url);
       final response = await http.get(uri);
       if (response.statusCode == 200) {

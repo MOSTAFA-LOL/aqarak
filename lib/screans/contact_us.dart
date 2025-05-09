@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:emailjs/emailjs.dart' as emailjs;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:aqarak/cubit/user_cubit.dart';
 
 class ContactUsScreen extends StatefulWidget {
   const ContactUsScreen({super.key});
@@ -13,41 +15,118 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _subjectController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _inquiryTypeController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    try {
+      emailjs.init(const emailjs.Options(
+        publicKey: 'SbM6lp_8WtqxEQPLm',
+      ));
+      print('EmailJS initialized successfully');
+    } catch (e) {
+      print('Error initializing EmailJS: $e');
+    }
+    // Fill user data if available
+    final userCubit = context.read<UserCubit>();
+    _nameController.text = userCubit.currentUserName ?? '';
+    _emailController.text = userCubit.currentUserEmail ?? '';
+    _phoneController.text = userCubit.currentUserPhone ?? '';
+  }
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _subjectController.dispose();
+    _phoneController.dispose();
+    _inquiryTypeController.dispose();
     _messageController.dispose();
     super.dispose();
   }
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      // Process form data
-      print('Form submitted');
-      print('Name: ${_nameController.text}');
-      print('Email: ${_emailController.text}');
-      print('Subject: ${_subjectController.text}');
-      print('Message: ${_messageController.text}');
-      
-      // Show confirmation dialog
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('تم الارسال'),
-          content: Text('تم ارسال رسالتك بنجاح'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('حسنا'),
-            ),
-          ],
+  Future<bool> sendEmail(Map<String, dynamic> templateParams) async {
+    try {
+      // Using the most basic EmailJS template variables
+      final params = {
+        'to_name': 'Admin',
+        'from_name': templateParams['name'],
+        'from_email': templateParams['email'],
+        'phone_number': templateParams['phone'],
+        'subject': templateParams['inquiry_type'],
+        'message_html': templateParams['message'],
+      };
+
+      print('Sending email with params: $params'); // Debug log
+
+      await emailjs.send(
+        'service_fyj452h',
+        'template_q25l7nr',
+        params,
+        const emailjs.Options(
+          publicKey: 'SbM6lp_8WtqxEQPLm',
         ),
       );
+      print('SUCCESS!');
+      return true;
+    } catch (error) {
+      if (error is emailjs.EmailJSResponseStatus) {
+        print('EmailJS Error Details:');
+        print('Status: ${error.status}');
+        print('Text: ${error.text}');
+      }
+      print('Full error: $error');
+      return false;
+    }
+  }
+
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      final templateParams = {
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'phone': _phoneController.text,
+        'inquiry_type': _inquiryTypeController.text,
+        'message': _messageController.text,
+        'from_name': _nameController.text,
+        'reply_to': _emailController.text,
+      };
+      bool result = await sendEmail(templateParams);
+      if (result) {
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('تم الارسال'),
+              content: Text('تم ارسال رسالتك بنجاح'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('حسنا'),
+                ),
+              ],
+            ),
+          );
+        }
+      } else {
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('خطأ'),
+              content: Text('حدث خطأ أثناء إرسال الرسالة'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('حسنا'),
+                ),
+              ],
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -156,24 +235,41 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty|| value.contains('@')) {
+                  if (value == null || value.isEmpty) {
                     return 'من فضلك ادخل ايميلك';
                   }
-                  
+                  if (!value.contains('@')) {
+                    return 'من فضلك ادخل ايميل صحيح';
+                  }
                   return null;
                 },
               ),
               SizedBox(height: 15),
               TextFormField(
-                controller: _subjectController,
+                controller: _phoneController,
                 decoration: InputDecoration(
-                  labelText: 'موضوعك',
-                  prefixIcon: Icon(Icons.subject),
+                  labelText: 'رقم الهاتف',
+                  prefixIcon: Icon(Icons.phone),
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'من فضلك اكتب النص الذي تريده';
+                    return 'من فضلك ادخل رقم هاتفك';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 15),
+              TextFormField(
+                controller: _inquiryTypeController,
+                decoration: InputDecoration(
+                  labelText: 'نوع الاستفسار',
+                  prefixIcon: Icon(Icons.category),
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'من فضلك ادخل نوع الاستفسار';
                   }
                   return null;
                 },

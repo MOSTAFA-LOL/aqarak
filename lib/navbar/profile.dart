@@ -7,9 +7,12 @@ import 'package:aqarak/screans/Privacy%20Policy.dart';
 import 'package:aqarak/screans/Terms%20of%20Service.dart';
 import 'package:aqarak/screans/auth.dart';
 import 'package:aqarak/screans/contact_us.dart';
+import 'package:aqarak/cubit/user_cubit.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 class Profile extends StatefulWidget {
   const Profile({
@@ -37,10 +40,11 @@ class _ProfileState extends State<Profile> {
               Row(
                 children: [
                   Text(
-                    'الملف الشخصي ',
+                    'الملف الشخصي',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  Spacer(),
+                  const Spacer(),
+                  
                   IconButton(
                       onPressed: () {
                         ThemeService().changeTheme();
@@ -54,31 +58,25 @@ class _ProfileState extends State<Profile> {
               Stack(
                 alignment: Alignment.bottomRight,
                 children: [
-                  Container(      
-                decoration:BoxDecoration(borderRadius: BorderRadius.circular(11)),
-                    child: Image.network(
-                      'https://res.cloudinary.com/dizj9rluo/image/upload/v1744113485/defaultPerson_e7w75t.jpg',
-                    height: 60,
-                    width: 60,
-                    ),
-                  ),
                   Container(
-                    padding: EdgeInsets.all(1),
-                    decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 51, 70, 240),
-                        borderRadius: BorderRadius.circular(4)),
-                    child: Icon(
-                      Icons.edit_sharp,
-                      size: 20,
-                    ),
-                  ),
+                      margin: const EdgeInsets.all(8),
+                      child: CircleAvatar(
+                        radius: 40, // Adjusted for better proportionality
+                        backgroundImage: NetworkImage(
+                          (context.read<UserCubit>().currentUserImage?.isNotEmpty ?? false)
+                              ? context.read<UserCubit>().currentUserImage!
+                              : 'https://res.cloudinary.com/dizj9rluo/image/upload/v1744113485/defaultPerson_e7w75t.jpg',
+                        ),
+                        backgroundColor: Colors.grey.shade200, // Fallback color
+                      ),
+                    )
                 ],
               ),
               SizedBox(
                 height: 5,
               ),
               Text(
-                'اسم المالك',
+                context.read<UserCubit>().currentUserName ?? ' اسم المستخدم',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               SizedBox(

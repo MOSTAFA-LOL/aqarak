@@ -70,7 +70,7 @@ class _BookpageState extends State<Bookpage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.bookmark_border,
+                    Icons.add_shopping_cart_rounded,
                     size: 80,
                     color: Colors.grey[400],
                   ),

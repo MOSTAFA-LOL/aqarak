@@ -21,15 +21,20 @@ class _AuthScreanState extends State<AuthScrean> {
       child: BlocConsumer<UserCubit, UserState>(
         listener: (context, state) {
           if (state is SignInSuccess || state is SignUpSuccess) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text("تم بنجاح")));
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const TapScrean()),
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("تم تسجيل الدخول بنجاح")),
             );
+            if (state is SignUpSuccess) {
+              setState(() {
+                _isLogin = true;
+              });
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const TapScrean()),
+              );
+            }
           } else if (state is SignInFailure || state is SignUpFailure) {
-            
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
@@ -39,7 +44,6 @@ class _AuthScreanState extends State<AuthScrean> {
                 ),
               ),
             );
-            
           }
         },
         builder: (context, state) {
@@ -87,6 +91,35 @@ class _AuthScreanState extends State<AuthScrean> {
                                   return null;
                                 },
                               ),
+                              if (!_isLogin) ...[
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: 'الاسم',
+                                  ),
+                                  controller:
+                                      context.read<UserCubit>().signUpName,
+                                  validator: (value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return "من فضلك أدخل الاسم";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    labelText: 'رقم الهاتف',
+                                  ),
+                                  keyboardType: TextInputType.phone,
+                                  controller:
+                                      context.read<UserCubit>().signUpPhone,
+                                  validator: (value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return "من فضلك أدخل رقم الهاتف";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
                               TextFormField(
                                 decoration: const InputDecoration(
                                   labelText: 'الرقم السري',
@@ -115,6 +148,9 @@ class _AuthScreanState extends State<AuthScrean> {
                               else
                                 ElevatedButton(
                                   onPressed: () {
+                                      
+                                    context.read<UserCubit>().currentUserToken;
+                                    print(context.read<UserCubit>().currentUserToken);
                                     if (_isLogin) {
                                       context.read<UserCubit>().signIn();
                                     } else {

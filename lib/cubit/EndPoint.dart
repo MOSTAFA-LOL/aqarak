@@ -1,6 +1,6 @@
 // ignore: file_names
 class EndPoint {
-  static String baseUrl = "http://mohamedtahoon.runasp.net/api/";
+  static String baseUrl = "https://mohamedtahoon.runasp.net/api/";
   static String signIn = "auth/login";
   static String signUp = "users";
   static String getUserDataEndPoint(id) {
